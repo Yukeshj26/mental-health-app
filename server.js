@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import admin from "firebase-admin"; 
 import apiRoutes from "./routes/index.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import Chat from "./models/Chat.js";
+import Chat from "./models/chat.js";
 
 // Load environment variables
 dotenv.config();

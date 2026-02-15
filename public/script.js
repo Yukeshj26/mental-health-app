@@ -131,7 +131,7 @@ window.sendMessage = async function() {
     input.value = "";
 
     try {
-        const res = await fetch("http://localhost:5001/chat", {
+        const res = await fetch("https://mental-health-app-2vww.onrender.com/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
             body: JSON.stringify({ message: msg })
@@ -155,7 +155,7 @@ async function loadChatHistory() {
     const token = localStorage.getItem("token");
     if (!token) return;
     try {
-        const res = await fetch("http://localhost:5001/api/chat/history", {
+        const res = await fetch("https://mental-health-app-2vww.onrender.com/api/chat/history", {
             headers: { "Authorization": `Bearer ${token}` }
         });
         const messages = await res.json();
