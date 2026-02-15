@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Login - Mental Well-Being App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+
+   <div id="auth-container">
+    <div class="card auth-card">
+        <h2 id="auth-title">Welcome Back</h2>
+        <p id="auth-desc">Please login to access your well-being dashboard.</p>
+        
+        <div class="input-group">
+            <input id="reg-name" type="text" placeholder="Full Name" style="display: none;">
+            <input id="email" type="email" placeholder="Email" required>
+            <input id="password" type="password" placeholder="Password" required>
+        </div>
+        <div id="recaptcha-container"></div>
+
+        <button id="auth-btn" class="btn-primary" onclick="handleAuth()">Login</button>
+        
+        <p class="toggle-text" style="margin-top: 15px; font-size: 0.9rem;">
+            <span id="toggle-msg">Don't have an account?</span> 
+            <a href="#" onclick="toggleAuthMode()" id="toggle-link">Sign Up</a>
+        </p>
+    </div>
+</div>
+
+<script type="module" src="script.js?v=1.0.1"></script>
+</body>
+</html>

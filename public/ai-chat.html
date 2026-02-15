@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>AI Assistant | MindCheck</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+    <header class="app-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <div class="nav-left">
+        <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+    </div>
+
+    <h1 style="flex-grow: 1; text-align: center;">Personal AI Guide</h1>
+
+    <div class="nav-right" style="display: flex; gap: 10px; align-items: center;">
+        <button class="btn-icon" onclick="toggleDarkMode()">🌙</button>
+        <button class="btn-danger" onclick="handleLogout()" style="padding: 5px 10px; font-size: 0.8rem;">Logout</button>
+    </div>
+</header>
+    <main class="chat-container">
+        <div id="chatbox" class="chat-display"></div>
+        
+        <div class="chat-input-area">
+            <input id="userInput" placeholder="Share your thoughts..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button class="btn-send" onclick="sendMessage()">Send</button>
+        </div>
+    </main>
+
+    <script type="module" src="script.js?v=1.0.1"></script>
+</body>
+</html>

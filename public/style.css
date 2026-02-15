@@ -1,0 +1,337 @@
+/* --- Root Variables --- */
+/* Using variables makes theme switching much easier */
+:root {
+  --bg-color: #f4f7f6;
+  --card-bg: #ffffff;
+  --text-color: #333333;
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --danger-color: #dc3545;
+  --border-color: #dddddd;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Dark Mode Variables --- */
+body.dark {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --border-color: #444444;
+  --shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* --- General Layout --- */
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  transition: background 0.3s, color 0.3s;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.content-wrapper {
+  padding: 10px;
+}
+
+/* --- Components --- */
+.card {
+  background: var(--card-bg);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+/* --- Forms & Buttons --- */
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-color);
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+button {
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s;
+  margin: 5px 0;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+  background-color: #a71d2a;
+}
+
+/* --- Chatbot UI --- */
+
+#chatbox {
+  height: 350px;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+#chatbox p {
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 80%;
+  line-height: 1.5;
+  position: relative;
+}
+
+/* User Messages: Blue bubbles on the right */
+.user-msg {
+  align-self: flex-end;
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* Bot Messages: Gray bubbles on the left */
+.bot-msg {
+  align-self: flex-start;
+  background-color: #e9ecef;
+  color: #333;
+  border-bottom-left-radius: 4px;
+}
+
+body.dark .bot-msg {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+}
+
+/* --- Questionnaire & Results --- */
+.questionnaire label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+.answer {
+  width: 80px;
+}
+
+#result {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: 30px 0;
+}
+.ai-fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, background-color 0.3s;
+    z-index: 1000;
+}
+
+.ai-fab:hover {
+    transform: scale(1.1);
+    background-color: #45a049;
+}
+
+.fab-tooltip {
+    visibility: hidden;
+    position: absolute;
+    right: 70px;
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.ai-fab:hover .fab-tooltip {
+    visibility: visible;
+}
+/* Layout for the 20 Questions */
+.questions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 25px 0;
+}
+
+.question-item {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: transform 0.2s ease;
+}
+
+.question-item:hover {
+    transform: translateY(-3px);
+    border-color: #4CAF50;
+}
+
+/* Result Styling */
+.status-result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    background: #f0fdf4;
+    border: 2px solid #4CAF50;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* --- Optimized Grid for 20 Questions --- */
+.questions-grid {
+    display: grid;
+    /* This creates a responsive layout that shifts from 1 to 2 columns */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* --- Refined Question Card --- */
+.question-item {
+    background: var(--card-bg);
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease-in-out;
+}
+
+.question-item:hover {
+    box-shadow: var(--shadow);
+    border-color: #4CAF50;
+    transform: translateY(-2px);
+}
+
+.question-item label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+/* --- Select Dropdown Styling --- */
+.health-q {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+/* --- Chat Container (Full Screen for ai-chat.html) --- */
+.chat-container {
+    max-width: 900px;
+    margin: 0 auto;
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Custom Scrollbar for Chatbox */
+#chatbox::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatbox::-webkit-scrollbar-thumb {
+    background-color: #cccccc;
+    border-radius: 10px;
+}
+
+/* --- Typing Animation for AI --- */
+.typing {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+#auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    padding: 40px;
+}
+
+.input-group input {
+    margin-bottom: 15px;
+    padding: 12px;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    font-size: 1.1rem;
+}
+
+.toggle-text a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}

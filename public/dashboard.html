@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Dashboard - Mental Well-Being</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+    <header class="app-header">
+        <h1>Mental Well-Being Check</h1>
+        <div class="header-actions">
+            <button class="btn-icon" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">🌙</button>
+            <button class="btn-danger" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <section class="card status-check">
+            <h2>Comprehensive Mental Health Evaluation</h2>
+            <p class="section-description">Please answer all 20 questions below. Your data is encrypted and secure.</p>
+            
+            <div id="questions-container" class="questions-grid">
+                </div>
+
+            <div class="assessment-actions">
+                <button class="btn-primary" onclick="calculateComplexScore()">Analyze My Results</button>
+            </div>
+            
+            <div id="result-display" class="status-result" style="display: none;">
+                </div>
+        </section>
+    </main>
+
+    <div class="ai-fab" onclick="goToChat()">
+        <span class="fab-icon">🤖</span>
+        <span class="fab-tooltip">Chat with AI Assistant</span>
+    </div>
+
+    <script type="module" src="script.js?v=1.0.1"></script>
+</body>
+</html>
