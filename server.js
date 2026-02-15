@@ -10,8 +10,18 @@ import Chat from "./models/Chat.js";
 // Load environment variables
 dotenv.config();
 
-// 1. Initialize Firebase Admin SDK
-import serviceAccount from "./serviceAccountKey.json" with { type: "json" };
+// --- 1. CLOUD-READY FIREBASE INITIALIZATION ---
+let serviceAccount;
+
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    // For Render: Use the Environment Variable string
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+} else {
+    // For Localhost: Use the local JSON file
+    const { default: localKey } = await import("./serviceAccountKey.json", { with: { type: "json" } });
+    serviceAccount = localKey;
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
@@ -27,7 +37,7 @@ app.use(express.static('public', {
   maxAge: '0'
 }));
 
-// 2. Authentication Middleware
+// --- 2. AUTHENTICATION MIDDLEWARE ---
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -43,7 +53,7 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-// 3. Database Connection Logic
+// --- 3. DATABASE CONNECTION LOGIC ---
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -54,13 +64,10 @@ const connectDB = async () => {
   }
 };
 
-// 4. API Routes
+// --- 4. API ROUTES ---
 app.use("/api", apiRoutes);
 
-/**
- * GET /api/chat/history
- * Defined before the server starts to ensure the route is registered.
- */
+// GET History
 app.get("/api/chat/history", authenticateToken, async (req, res) => {
     try {
         const chatHistory = await Chat.findOne({ userId: req.user.uid });
@@ -70,17 +77,14 @@ app.get("/api/chat/history", authenticateToken, async (req, res) => {
     }
 });
 
-/**
- * POST /chat
- * AI conversation and persistence logic.
- */
+// POST Chat
 app.post("/chat", authenticateToken, async (req, res) => {
   const { message } = req.body;
   const userId = req.user.uid;
 
   try {
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash", 
+      model: "gemini-1.5-flash", // Note: Ensure this model name is correct for your tier
       systemInstruction: "You are a professional Mental Well-being Assistant. Be empathetic and concise."
     });
 
@@ -88,7 +92,6 @@ app.post("/chat", authenticateToken, async (req, res) => {
     const result = await chat.sendMessage(message);
     const responseText = result.response.text();
 
-    // Persist to MongoDB
     await Chat.findOneAndUpdate(
         { userId: userId }, 
         { 
@@ -110,8 +113,7 @@ app.post("/chat", authenticateToken, async (req, res) => {
   }
 });
 
-// 5. Start Server
-// This is the industry standard for deployment
+// --- 5. START SERVER ---
 const PORT = process.env.PORT || 5001; 
 
 connectDB().then(() => {
