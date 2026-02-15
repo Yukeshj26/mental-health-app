@@ -179,19 +179,29 @@ window.startVoice = () => {
 };
 // --- 5. PAGE INITIALIZATION ---
 window.addEventListener('DOMContentLoaded', () => {
-    // Check for startVoice assignment first
     console.log("Initializing Team Aqua5 App...");
 
-    const chatbox = document.getElementById("chatbox");
-    // Only load history if the chatbox actually exists on this page
-    if (chatbox && window.location.pathname.includes("ai-chat.html")) {
-        loadChatHistory();
-    }
-    
-    // Safety check for questions
+    // 1. GENERATE QUESTIONS DYNAMICALLY
     const qContainer = document.getElementById("questions-container");
     if (qContainer) {
-        // ... (your loop to build questions)
+        mentalHealthQuestions.forEach((item, index) => {
+            const div = document.createElement("div");
+            div.className = "question-item"; // Use this for CSS styling
+            div.innerHTML = `
+                <p>${index + 1}. ${item.q}</p>
+                <select class="health-q" id="q-${index}">
+                    ${scales[item.type].map((opt, i) => `<option value="${i}">${opt}</option>`).join('')}
+                </select>
+            `;
+            qContainer.appendChild(div);
+        });
+        console.log("✅ Questions injected successfully.");
+    }
+
+    // 2. LOAD HISTORY IF ON CHAT PAGE
+    const chatbox = document.getElementById("chatbox");
+    if (chatbox && window.location.pathname.includes("ai-chat.html")) {
+        loadChatHistory();
     }
 });
 

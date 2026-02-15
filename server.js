@@ -56,10 +56,18 @@ const authenticateToken = async (req, res, next) => {
 // --- 3. DATABASE CONNECTION LOGIC ---
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    // Force the use of the environment variable
+    const uri = process.env.MONGO_URI;
+    
+    if (!uri) {
+      throw new Error("MONGO_URI is not defined in environment variables!");
+    }
+
+    await mongoose.connect(uri);
     console.log("MongoDB Connected ✅");
   } catch (err) {
     console.error("MongoDB Connection Failed ❌", err.message);
+    // On Render, we want to know exactly what the URI was (optional/for debugging)
     process.exit(1); 
   }
 };
@@ -84,7 +92,7 @@ app.post("/chat", authenticateToken, async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash", // Note: Ensure this model name is correct for your tier
+      model: "gemini-2.5-flash", // Note: Ensure this model name is correct for your tier
       systemInstruction: "You are a professional Mental Well-being Assistant. Be empathetic and concise."
     });
 
