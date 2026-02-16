@@ -107,17 +107,29 @@ window.handleAuth = async function() {
 
 window.calculateComplexScore = () => {
     let totalScore = 0;
-    const inputs = document.querySelectorAll(".health-q");
-    inputs.forEach((input, index) => {
-        const val = parseInt(input.value) || 0;
-        totalScore += (val * mentalHealthQuestions[index].weight);
+    let unanswered = false;
+
+    mentalHealthQuestions.forEach((_, index) => {
+        const selected = document.querySelector(`input[name="q-${index}"]:checked`);
+        if (selected) {
+            const val = parseInt(selected.value);
+            const weight = mentalHealthQuestions[index].weight;
+            totalScore += (val * weight);
+        } else {
+            unanswered = true;
+        }
     });
+
+    if (unanswered) {
+        alert("Please answer all questions before analyzing.");
+        return;
+    }
 
     let condition = totalScore < 10 ? "Resilient 🌿" : totalScore < 25 ? "Stressed ⚠️" : "High Load ❤️";
     const display = document.getElementById("result-display");
     if (display) {
         display.style.display = "block";
-        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Score: ${totalScore.toFixed(1)}</p>`;
+        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p>`;
     }
 };
 
@@ -177,33 +189,61 @@ window.startVoice = () => {
     };
     recognition.start();
 };
-// --- 5. PAGE INITIALIZATION ---
+// --- 5. PAGE INITIALIZATION (Updated) ---
 window.addEventListener('DOMContentLoaded', () => {
-    console.log("Initializing Team Aqua5 App...");
-
-    // 1. GENERATE QUESTIONS DYNAMICALLY
     const qContainer = document.getElementById("questions-container");
-    if (qContainer) {
-        mentalHealthQuestions.forEach((item, index) => {
-            const div = document.createElement("div");
-            div.className = "question-item"; // Use this for CSS styling
-            div.innerHTML = `
-                <p>${index + 1}. ${item.q}</p>
-                <select class="health-q" id="q-${index}">
-                    ${scales[item.type].map((opt, i) => `<option value="${i}">${opt}</option>`).join('')}
-                </select>
-            `;
-            qContainer.appendChild(div);
-        });
-        console.log("✅ Questions injected successfully.");
-    }
+    if (!qContainer) return;
 
+    // Grouping questions by category
+    const categories = {
+        mood: "Depression & Mood 🧠",
+        physical: "Physical & Cognitive ⚡",
+        social: "Social & Connection 🤝",
+        outlook: "Future & Outlook 🌅"
+    };
+
+    // Clear container first
+    qContainer.innerHTML = "";
+
+    Object.keys(categories).forEach(catKey => {
+        // Add Category Header
+        const header = document.createElement("h3");
+        header.className = "category-header";
+        header.innerText = categories[catKey];
+        qContainer.appendChild(header);
+
+        // Filter and render questions for this category
+        mentalHealthQuestions.forEach((item, index) => {
+            if (item.cat === catKey) {
+                const div = document.createElement("div");
+                div.className = "question-card";
+                
+                // Get the scale labels for this question type
+                const labels = scales[item.type];
+
+                div.innerHTML = `
+                    <p class="question-text">${index + 1}. ${item.q}</p>
+                    <div class="levels-wrapper">
+                        ${labels.map((opt, i) => `
+                            <label class="level-box">
+                                <input type="radio" name="q-${index}" value="${i}" class="health-q-radio" required>
+                                <span class="level-num">Level ${i}</span>
+                                <span class="level-desc">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                qContainer.appendChild(div);
+            }
+        });
+    });
     // 2. LOAD HISTORY IF ON CHAT PAGE
     const chatbox = document.getElementById("chatbox");
     if (chatbox && window.location.pathname.includes("ai-chat.html")) {
         loadChatHistory();
     }
 });
+
 
 // --- 6. EXPLICIT GLOBAL EXPORTS ---
 // This section allows your HTML "onclick" events to find the functions
