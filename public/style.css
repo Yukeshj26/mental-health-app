@@ -672,22 +672,39 @@ body.dark .user-profile {
 }
 .btn-top {
     position: fixed;
-    bottom: 90px; /* Sits above the AI FAB */
-    right: 25px;
-    width: 45px;
-    height: 45px;
+    bottom: 100px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.8); /* Glass effect */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    background-color: var(--primary-color, #3498db);
-    color: white;
-    border: none;
-    font-size: 1.5rem;
+    color: var(--primary-color, #3498db);
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    z-index: 99;
-    transition: opacity 0.3s, transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-top:hover {
-    transform: scale(1.1);
-    background-color: #2980b9;
+    transform: translateY(-5px);
+    background: var(--primary-color, #3498db);
+    color: white;
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+}
+/* Dark Mode Adjustment */
+body.dark .btn-top {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #5dade2;
+}
+
+body.dark .btn-top:hover {
+    background: #5dade2;
+    color: #121212;
 }

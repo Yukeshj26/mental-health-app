@@ -93,7 +93,7 @@ window.updateProgressBar = () => {
         
         // Optional: Change color to green when 100%
         if (topBtn) {
-            if (percentage >= 50) {
+            if (percentage >= 40) {
                 topBtn.style.display = "block";
             } else {
                 topBtn.style.display = "none";
