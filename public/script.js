@@ -77,62 +77,6 @@ const mentalHealthQuestions = [
     { q: "How frequently are you experiencing 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
     { q: "I am hopeful about what my future holds.", cat: "outlook", weight: -2.0, type: "agreement" }
 ];
-// --- 5. PAGE INITIALIZATION (Updated with absolute relevant labels) ---
-window.addEventListener('DOMContentLoaded', () => {
-    const qContainer = document.getElementById("questions-container");
-    if (!qContainer) return;
-
-    const categories = {
-        mood: "Depression & Mood 🧠",
-        physical: "Physical & Cognitive ⚡",
-        social: "Social & Connection 🤝",
-        outlook: "Future & Outlook 🌅"
-    };
-
-    qContainer.innerHTML = ""; // Reset container
-
-    Object.keys(categories).forEach(catKey => {
-        // Add Category Header
-        const header = document.createElement("h3");
-        header.className = "category-header";
-        header.innerText = categories[catKey];
-        qContainer.appendChild(header);
-
-        // Filter and render questions for this category
-        mentalHealthQuestions.forEach((item, index) => {
-            if (item.cat === catKey) {
-                const div = document.createElement("div");
-                div.className = "question-card";
-                
-                // --- INSERT NEW CODE HERE ---
-                const labels = scales[item.type]; // Grabs the relevant scale (freq, quality, etc.)
-
-                div.innerHTML = `
-                    <p class="question-text">${index + 1}. ${item.q}</p>
-                    <div class="levels-wrapper">
-                        ${labels.map((opt, i) => `
-                            <label class="level-box">
-                                <input type="radio" name="q-${index}" value="${i}" class="health-q-radio" required>
-                                <span class="level-num">Level ${i}</span>
-                                <span class="level-desc">${opt}</span> 
-                            </label>
-                        `).join('')}
-                    </div>
-                `;
-                // --- END NEW CODE ---
-                
-                qContainer.appendChild(div);
-            }
-        });
-    });
-
-    // Load history if on chat page
-    const chatbox = document.getElementById("chatbox");
-    if (chatbox && window.location.pathname.includes("ai-chat.html")) {
-        loadChatHistory();
-    }
-});
-
 // --- 4. CORE FUNCTIONS ---
 window.updateProgressBar = () => {
     const totalQuestions = mentalHealthQuestions.length;
@@ -178,21 +122,51 @@ window.handleAuth = async function() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const name = document.getElementById("reg-name")?.value || "User";
+    const btn = document.getElementById("auth-btn");
+
+    if (!email || !password) {
+        alert("Please fill in all fields.");
+        return;
+    }
 
     try {
+        btn.innerText = "Processing..."; // Give user feedback
+        btn.disabled = true;
+
         if (isLoginMode) {
+            // 1. ATTEMPT LOGIN
             await signInWithEmailAndPassword(auth, email, password);
+            console.log("Login successful!");
+            // 2. REDIRECT MANUALLY (Since your listener might be slow)
+            window.location.href = "dashboard.html"; 
         } else {
+            // 1. ATTEMPT SIGNUP
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const idToken = await userCredential.user.getIdToken();
-            await fetch("http://localhost:5001/api/auth/signup-db", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ idToken, name })
-            });
-            alert("Account created!");
+            const user = userCredential.user;
+
+            // 2. SEND TO YOUR DATABASE (Optional but recommended)
+            try {
+                const idToken = await user.getIdToken();
+                await fetch("https://mental-health-app-2vww.onrender.com/api/auth/signup-db", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idToken, name })
+                });
+            } catch (dbErr) {
+                console.warn("DB update failed, but user created in Firebase.");
+            }
+
+            alert("Account created successfully!");
+            window.location.href = "dashboard.html";
         }
-    } catch (err) { alert(err.message); }
+    } catch (err) { 
+        // Handles: "wrong-password", "user-not-found", "email-already-in-use"
+        console.error("Auth Error:", err.code);
+        alert(err.message); 
+    } finally {
+        btn.innerText = isLoginMode ? "Login" : "Create Account";
+        btn.disabled = false;
+    }
 };
 
 window.findNearbyClinics = () => {
@@ -203,25 +177,16 @@ window.findNearbyClinics = () => {
 
 window.calculateComplexScore = () => {
     let rawScore = 0;
-    let maxPossibleRawScore = 0;
     let unanswered = false;
 
     mentalHealthQuestions.forEach((item, index) => {
         const selected = document.querySelector(`input[name="q-${index}"]:checked`);
         if (selected) {
             const val = parseInt(selected.value);
-            // We use the absolute weight to calculate the potential 'impact' range
-            maxPossibleRawScore += Math.abs(item.weight) * 3; 
-
-            // If weight is positive (a symptom), a high level subtracts from health
-            // If weight is negative (a strength), a high level adds to health
             if (item.weight > 0) {
-                // Symptom: Level 3 means -3 impact on health
-                rawScore -= (val * item.weight);
+                rawScore -= (val * item.weight); // Symptom subtracts from health
             } else {
-                // Strength: Level 3 means +3 impact on health
-                // We convert negative weight to positive for the math
-                rawScore += (val * Math.abs(item.weight));
+                rawScore += (val * Math.abs(item.weight)); // Strength adds to health
             }
         } else {
             unanswered = true;
@@ -233,45 +198,43 @@ window.calculateComplexScore = () => {
         return;
     }
 
-    // Normalize to a 0-100 scale
-    // We offset the rawScore so it starts from a base
-    let baseScore = 70; // Start at a 'neutral' healthy base
-    let finalPercentage = baseScore + (rawScore);
-    
-    // Clamp values between 0 and 100
-    finalPercentage = Math.max(0, Math.min(100, finalPercentage));
+    let baseScore = 70; 
+    let finalPercentage = Math.max(0, Math.min(100, baseScore + rawScore));
 
     const display = document.getElementById("result-display");
     if (display) {
         display.style.display = "block";
         
-        let status = "";
-        let color = "";
-        
+        // --- DYNAMIC COLOR LOGIC ---
+        let status, color, bgColor;
         if (finalPercentage > 80) { 
-            status = "Excellent - Thriving 🌟"; 
-            color = "#2ecc71";
+            status = "Excellent - Thriving 🌟"; color = "#2ecc71"; bgColor = "#e8f8f0";
         } else if (finalPercentage > 60) { 
-            status = "Good - Resilient 🌿"; 
-            color = "#3498db";
+            status = "Good - Resilient 🌿"; color = "#3498db"; bgColor = "#ebf5fb";
         } else if (finalPercentage > 40) { 
-            status = "Fair - Moderate Stress ⚠️"; 
-            color = "#f1c40f";
+            status = "Fair - Moderate Stress ⚠️"; color = "#f39c12"; bgColor = "#fef9e7";
         } else { 
-            status = "Low - Seeking Support Recommended ❤️"; 
-            color = "#e74c3c";
+            status = "Seeking Support Recommended ❤️"; color = "#e74c3c"; bgColor = "#fdedec";
         }
 
+        // Apply styles directly to the result box
+        display.style.backgroundColor = bgColor;
+        display.style.border = `2px solid ${color}`;
+        display.style.borderRadius = "15px";
+        display.style.padding = "20px";
+        display.style.color = "#333"; // Ensure text is dark inside the light colored box
+
         display.innerHTML = `
-            <div style="border-left: 5px solid ${color}; padding-left: 15px;">
-                <h2 style="color: ${color}">${finalPercentage.toFixed(0)}% Health Score</h2>
-                <h3>Status: ${status}</h3>
-                <p>Your mental well-being index is based on current symptoms and protective factors.</p>
+            <div style="text-align: center;">
+                <h1 style="color: ${color}; font-size: 3rem; margin: 0;">${finalPercentage.toFixed(0)}%</h1>
+                <p style="text-transform: uppercase; font-weight: bold; color: ${color};">Mental Health Index</p>
+                <hr style="border: 0; border-top: 1px solid ${color}; opacity: 0.3; margin: 15px 0;">
+                <h3 style="margin-bottom: 5px;">${status}</h3>
+                <p style="font-size: 0.9rem;">${finalPercentage > 50 ? "Keep maintaining your positive routines!" : "Consider reaching out to a professional or the helpline above."}</p>
             </div>
         `;
     }
 };
-
 window.sendMessage = async function() {
     const input = document.getElementById("userInput");
     const msg = input.value?.trim();
