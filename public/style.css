@@ -487,3 +487,61 @@ body.dark .bot-msg {
     transform: translateY(-2px);
     border-color: #34a853; /* Highlights green on hover */
 }
+.quick-access-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.resource-item {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg, #fff);
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.resource-item:hover {
+    transform: translateY(-2px);
+    border-color: #3498db;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.helpline-highlight:hover {
+    border-color: #e74c3c;
+}
+
+.resource-icon {
+    font-size: 1.8rem;
+    margin-right: 12px;
+}
+
+.resource-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.resource-text strong {
+    font-size: 0.9rem;
+    color: var(--text-color, #333);
+}
+
+.resource-text span {
+    font-size: 0.75rem;
+    color: #777;
+}
+
+/* Adjustments for Dark Mode */
+body.dark .resource-item {
+    background: #2d2d2d;
+    border-color: #444;
+}

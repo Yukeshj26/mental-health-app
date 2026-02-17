@@ -194,12 +194,11 @@ window.calculateComplexScore = () => {
     });
 
     if (unanswered) {
-        alert("Please answer all questions.");
+        alert("Please answer all questions before analyzing.");
         return;
     }
 
     const display = document.getElementById("result-display");
-    const crisisBox = document.getElementById("crisis-box");
 
     if (display) {
         display.style.display = "block";
@@ -208,16 +207,13 @@ window.calculateComplexScore = () => {
         // Logic for Dynamic Visibility
         if (totalScore < 10) {
             condition = "Resilient 🌿";
-            crisisBox.style.display = "none";
         } else if (totalScore < 25) {
             condition = "Stressed ⚠️";
-            crisisBox.style.display = "none";
         } else {
             condition = "High Load ❤️";
-            crisisBox.style.display = "flex";  // Show Helpline
         }
 
-        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Score: ${totalScore.toFixed(1)}</p>`;
+        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p>`;
     }
 };
 
@@ -336,6 +332,10 @@ window.addEventListener('DOMContentLoaded', () => {
 // --- 6. EXPLICIT GLOBAL EXPORTS ---
 // This section allows your HTML "onclick" events to find the functions
 window.handleAuth = handleAuth;
+window.findNearbyClinics = () => {
+    const mapUrl = "https://www.google.com/maps/search/psychiatrist+near+me/";
+    window.open(mapUrl, '_blank');
+};
 window.toggleAuthMode = toggleAuthMode;
 window.handleLogout = () => {
     // 1. Clear local data so the next session starts fresh
