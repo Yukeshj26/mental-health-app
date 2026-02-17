@@ -150,6 +150,47 @@ body.dark .resource-text strong {
     justify-content: center;
     align-items: center;
 }
+/* Container for the buttons below the heading */
+.header-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Styled buttons for a professional look */
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.control-btn.btn-danger {
+    background: #fff5f5;
+    color: #e74c3c;
+    border-color: #fadbd8;
+}
+
+body.dark .control-btn.btn-danger {
+    background: #2c1a1a;
+    border-color: #5c2b2b;
+}
+
+.icon {
+    font-size: 1.1rem;
+}
 body.dark .resource-text span {
     color: #cccccc;
 }
@@ -164,6 +205,26 @@ body.dark {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 20px;
+    font-weight: 600;
+    color: var(--primary-color);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.user-avatar {
+    font-size: 1.2rem;
+}
+
+body.dark .user-profile {
+    background: rgba(52, 152, 219, 0.05);
+    color: #5dade2;
 }
 
 /* --- Questionnaire & Results --- */

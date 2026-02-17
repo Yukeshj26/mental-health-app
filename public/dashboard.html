@@ -14,10 +14,15 @@
     <h1 class="main-title">Mental Well-Being Check</h1>
     
     <div class="header-controls">
-        <button class="control-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <div class="user-profile">
+            <span class="user-avatar">👤</span>
+            <span id="user-display-name">Loading...</span>
+        </div>
+
+        <button class="control-btn" onclick="toggleDarkMode()">
             <span class="icon">🌙</span> Dark Mode
         </button>
-        <button class="control-btn btn-danger" onclick="logout()" title="Logout">
+        <button class="control-btn btn-danger" onclick="logout()">
             <span class="icon">🚪</span> Logout
         </button>
     </div>
