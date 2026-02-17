@@ -200,7 +200,6 @@ window.calculateComplexScore = () => {
 
     const display = document.getElementById("result-display");
     const crisisBox = document.getElementById("crisis-box");
-    const mapContainer = document.getElementById("map-container");
 
     if (display) {
         display.style.display = "block";
@@ -210,15 +209,12 @@ window.calculateComplexScore = () => {
         if (totalScore < 10) {
             condition = "Resilient 🌿";
             crisisBox.style.display = "none";
-            mapContainer.style.display = "none";
         } else if (totalScore < 25) {
             condition = "Stressed ⚠️";
             crisisBox.style.display = "none";
-            mapContainer.style.display = "block"; // Show Map
         } else {
             condition = "High Load ❤️";
             crisisBox.style.display = "flex";  // Show Helpline
-            mapContainer.style.display = "block"; // Show Map
         }
 
         display.innerHTML = `<h3>Condition: ${condition}</h3><p>Score: ${totalScore.toFixed(1)}</p>`;

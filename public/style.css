@@ -473,3 +473,17 @@ body.dark .bot-msg {
     cursor: pointer;
     border: none;
 }
+.map-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid #d1d1d1; /* Neutral grey instead of blue */
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.map-card:hover {
+    transform: translateY(-2px);
+    border-color: #34a853; /* Highlights green on hover */
+}

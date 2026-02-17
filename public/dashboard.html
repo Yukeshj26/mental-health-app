@@ -19,6 +19,23 @@
     </header>
 
     <main class="content-wrapper">
+        <section class="quick-access-bar">
+    <div class="resource-item" onclick="findNearbyClinics()">
+        <div class="resource-icon">📍</div>
+        <div class="resource-text">
+            <strong>Nearby Clinics</strong>
+            <span>Find psychiatrists in your area</span>
+        </div>
+    </div>
+
+    <div class="resource-item helpline-highlight" onclick="window.location.href='tel:14416'">
+        <div class="resource-icon">📞</div>
+        <div class="resource-text">
+            <strong>Tele-MANAS</strong>
+            <span>24/7 Govt. Helpline (14416)</span>
+        </div>
+    </div>
+</section>
         <section class="card status-check">
             <h2>Comprehensive Mental Health Evaluation</h2>
             <p class="section-description">Please answer all 20 questions below. Your data is encrypted and secure.</p>
@@ -48,7 +65,7 @@
     </div>
 </div>
 
-<div id="map-container" class="map-section" style="display: none;">
+<div id="map-container" class="map-section" style="display: block;">
     <div class="map-card">
         <h3>Nearby Professionals 📍</h3>
         <p>Find specialized clinics and psychiatrists in your current area.</p>
