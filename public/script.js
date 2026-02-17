@@ -41,33 +41,100 @@ onAuthStateChanged(auth, async (user) => {
 let isLoginMode = true;
 
 const scales = {
+    // For habit-based or recurring symptoms
     freq: ["Not at all", "Several days", "More than half the days", "Nearly every day"],
-    qual: ["Very Good", "Fair", "Poor", "Very Poor"],
-    agree: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"]
+    // For feelings and states of mind
+    intensity: ["None", "Mild / Distracting", "Moderate / Hard to manage", "Severe / Overwhelming"],
+    // For internal beliefs or support systems
+    agreement: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
+    // For habits like sleep or appetite
+    quality: ["Optimal / Healthy", "Slightly irregular", "Poor / Impacting life", "Very Poor / Crisis level"]
 };
 
 const mentalHealthQuestions = [
-    { q: "Little interest or pleasure in doing things?", cat: "mood", weight: 1.5, type: "freq" },
-    { q: "Feeling down, depressed, or hopeless?", cat: "mood", weight: 1.5, type: "freq" },
-    { q: "Feeling irritable or 'on edge'?", cat: "mood", weight: 1.0, type: "freq" },
-    { q: "Difficult to relax in free time?", cat: "mood", weight: 1.0, type: "freq" },
-    { q: "Overwhelmed by daily responsibilities?", cat: "mood", weight: 1.0, type: "freq" },
-    { q: "How would you rate your sleep quality?", cat: "physical", weight: 1.2, type: "qual" },
-    { q: "Significant change in your appetite?", cat: "physical", weight: 1.0, type: "qual" },
-    { q: "Feeling tired or having little energy?", cat: "physical", weight: 1.0, type: "freq" },
-    { q: "Stress-related physical pain?", cat: "physical", weight: 1.2, type: "freq" },
-    { q: "Hard to concentrate on reading/TV?", cat: "physical", weight: 1.0, type: "freq" },
-    { q: "Avoiding social interactions?", cat: "social", weight: 1.2, type: "freq" },
-    { q: "Do you feel supported by people?", cat: "social", weight: -1.0, type: "agree" },
-    { q: "Consistent with self-care routines?", cat: "social", weight: -1.0, type: "agree" },
-    { q: "Feeling lonely even when around others?", cat: "social", weight: 1.3, type: "freq" },
-    { q: "Performing a 'happy' version of yourself?", cat: "social", weight: 1.3, type: "freq" },
-    { q: "Confident in ability to handle problems?", cat: "outlook", weight: -1.2, type: "agree" },
-    { q: "Worrying excessively about control?", cat: "outlook", weight: 1.2, type: "freq" },
-    { q: "Feeling a sense of purpose?", cat: "outlook", weight: -1.5, type: "agree" },
-    { q: "Experiencing 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
-    { q: "Hopeful about your future?", cat: "outlook", weight: -1.5, type: "agree" }
+    // Mood - Intensity is more relevant for 'feelings'
+    { q: "Little interest or pleasure in doing things?", cat: "mood", weight: 1.5, type: "intensity" },
+    { q: "Feeling down, depressed, or hopeless?", cat: "mood", weight: 1.5, type: "intensity" },
+    { q: "Feeling irritable or 'on edge'?", cat: "mood", weight: 1.0, type: "intensity" },
+    { q: "How often is it difficult to relax in free time?", cat: "mood", weight: 1.0, type: "freq" },
+    { q: "How overwhelmed do you feel by daily responsibilities?", cat: "mood", weight: 1.0, type: "intensity" },
+    
+    // Physical - Quality is better for sleep/appetite
+    { q: "How would you rate your sleep quality over the last week?", cat: "physical", weight: 1.2, type: "quality" },
+    { q: "How significant is the change in your appetite?", cat: "physical", weight: 1.0, type: "intensity" },
+    { q: "How often do you feel tired or have little energy?", cat: "physical", weight: 1.0, type: "freq" },
+    { q: "Frequency of stress-related physical pain (headaches/tension)?", cat: "physical", weight: 1.2, type: "freq" },
+    { q: "How hard is it to concentrate on reading/TV?", cat: "physical", weight: 1.0, type: "intensity" },
+    
+    // Social - Frequency for actions, Agreement for support
+    { q: "How often are you avoiding social interactions?", cat: "social", weight: 1.2, type: "freq" },
+    { q: "I feel consistently supported by the people in my life.", cat: "social", weight: -1.0, type: "agreement" },
+    { q: "I am consistent with my self-care routines.", cat: "social", weight: -1.0, type: "agreement" },
+    { q: "How often do you feel lonely even when around others?", cat: "social", weight: 1.3, type: "freq" },
+    { q: "How often do you feel you're performing a 'happy' version of yourself?", cat: "social", weight: 1.3, type: "freq" },
+    
+    // Outlook - Agreement for core beliefs
+    { q: "I feel confident in my ability to handle my problems.", cat: "outlook", weight: -1.2, type: "agreement" },
+    { q: "How often do you worry excessively about things you can't control?", cat: "outlook", weight: 1.2, type: "freq" },
+    { q: "I feel a strong sense of purpose in my daily life.", cat: "outlook", weight: -1.5, type: "agreement" },
+    { q: "How frequently are you experiencing 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
+    { q: "I am hopeful about what my future holds.", cat: "outlook", weight: -1.5, type: "agreement" }
 ];
+// --- 5. PAGE INITIALIZATION (Updated with absolute relevant labels) ---
+window.addEventListener('DOMContentLoaded', () => {
+    const qContainer = document.getElementById("questions-container");
+    if (!qContainer) return;
+
+    const categories = {
+        mood: "Depression & Mood 🧠",
+        physical: "Physical & Cognitive ⚡",
+        social: "Social & Connection 🤝",
+        outlook: "Future & Outlook 🌅"
+    };
+
+    qContainer.innerHTML = ""; // Reset container
+
+    Object.keys(categories).forEach(catKey => {
+        // Add Category Header
+        const header = document.createElement("h3");
+        header.className = "category-header";
+        header.innerText = categories[catKey];
+        qContainer.appendChild(header);
+
+        // Filter and render questions for this category
+        mentalHealthQuestions.forEach((item, index) => {
+            if (item.cat === catKey) {
+                const div = document.createElement("div");
+                div.className = "question-card";
+                
+                // --- INSERT NEW CODE HERE ---
+                const labels = scales[item.type]; // Grabs the relevant scale (freq, quality, etc.)
+
+                div.innerHTML = `
+                    <p class="question-text">${index + 1}. ${item.q}</p>
+                    <div class="levels-wrapper">
+                        ${labels.map((opt, i) => `
+                            <label class="level-box">
+                                <input type="radio" name="q-${index}" value="${i}" class="health-q-radio" required>
+                                <span class="level-num">Level ${i}</span>
+                                <span class="level-desc">${opt}</span> 
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                // --- END NEW CODE ---
+                
+                qContainer.appendChild(div);
+            }
+        });
+    });
+
+    // Load history if on chat page
+    const chatbox = document.getElementById("chatbox");
+    if (chatbox && window.location.pathname.includes("ai-chat.html")) {
+        loadChatHistory();
+    }
+});
 
 // --- 4. CORE FUNCTIONS ---
 
