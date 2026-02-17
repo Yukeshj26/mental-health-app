@@ -21,19 +21,16 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // --- 2. AUTHENTICATION LISTENER ---
-onAuthStateChanged(auth, async (user) => {
-    const path = window.location.pathname;
-    const isAuthPage = path.includes("index.html") || path === "/" || path.endsWith("/");
-
+// Inside your Firebase Auth listener
+auth.onAuthStateChanged((user) => {
     if (user) {
-        const idToken = await user.getIdToken();
-        localStorage.setItem("token", idToken);
-        if (isAuthPage) window.location.href = "dashboard.html";
-    } else {
-        localStorage.removeItem("token");
-        if (path.includes("dashboard.html") || path.includes("ai-chat.html")) {
-            window.location.href = "index.html";
+        const nameDisplay = document.getElementById('user-display-name');
+        if (nameDisplay) {
+            // Priority: Display Name -> Email (before @) -> Guest
+            nameDisplay.innerText = user.displayName || user.email.split('@')[0] || "User";
         }
+    } else {
+        window.location.href = "index.html"; // Redirect if not logged in
     }
 });
 
@@ -396,7 +393,7 @@ window.findNearbyClinics = () => {
     window.open(mapUrl, '_blank');
 };
 window.toggleAuthMode = toggleAuthMode;
-window.handleLogout = () => {
+window.handleLogout = async () => {
     // 1. Clear local data so the next session starts fresh
     localStorage.clear(); 
     sessionStorage.clear();
