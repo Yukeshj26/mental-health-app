@@ -133,7 +133,23 @@ body.dark .progress-track {
 body.dark .resource-text strong {
     color: #ffffff;
 }
+/* This replaces the <center> tag and fixes the color */
+.main-title {
+    text-align: center;
+    color: var(--text-color); /* This ensures it turns white in dark mode */
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+    transition: color 0.3s ease;
+}
 
+/* Ensure the wrapper doesn't restrict the centering */
+.app-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 body.dark .resource-text span {
     color: #cccccc;
 }

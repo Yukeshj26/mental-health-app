@@ -11,12 +11,17 @@
 </head>
 <body class="light">
     <header class="app-header">
-       <h1 class="main-title">Mental Well-Being Check</h1>
-        <div class="header-actions">
-            <button class="btn-icon" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">🌙</button>
-            <button class="btn-danger" onclick="handleLogout()">Logout</button>
-        </div>
-    </header>
+    <h1 class="main-title">Mental Well-Being Check</h1>
+    
+    <div class="header-controls">
+        <button class="control-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+            <span class="icon">🌙</span> Dark Mode
+        </button>
+        <button class="control-btn btn-danger" onclick="logout()" title="Logout">
+            <span class="icon">🚪</span> Logout
+        </button>
+    </div>
+</header>
 
     <main class="content-wrapper">
         <section class="quick-access-bar">
