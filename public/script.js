@@ -172,31 +172,56 @@ window.handleAuth = async function() {
     } catch (err) { alert(err.message); }
 };
 
+// ADD THIS IN public/script.js (Section 4 or 6)
+
+window.findNearbyClinics = () => {
+    // This query searches for psychiatrists near the user's current GPS/IP location
+    const mapUrl = "https://www.google.com/maps/search/psychiatrist+near+me/";
+    window.open(mapUrl, '_blank');
+};
+
 window.calculateComplexScore = () => {
     let totalScore = 0;
     let unanswered = false;
 
-    mentalHealthQuestions.forEach((_, index) => {
+    mentalHealthQuestions.forEach((item, index) => {
         const selected = document.querySelector(`input[name="q-${index}"]:checked`);
         if (selected) {
-            const val = parseInt(selected.value);
-            const weight = mentalHealthQuestions[index].weight;
-            totalScore += (val * weight);
+            totalScore += (parseInt(selected.value) * item.weight);
         } else {
             unanswered = true;
         }
     });
 
     if (unanswered) {
-        alert("Please answer all questions before analyzing.");
+        alert("Please answer all questions.");
         return;
     }
 
-    let condition = totalScore < 10 ? "Resilient 🌿" : totalScore < 25 ? "Stressed ⚠️" : "High Load ❤️";
     const display = document.getElementById("result-display");
+    const crisisBox = document.getElementById("crisis-box");
+    const mapContainer = document.getElementById("map-container");
+
     if (display) {
         display.style.display = "block";
-        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p>`;
+        let condition = "";
+
+        // Logic for Dynamic Visibility
+        if (totalScore < 10) {
+            condition = "Resilient 🌿";
+            crisisBox.style.display = "none";
+            mapContainer.style.display = "none";
+        } else if (totalScore < 25) {
+            condition = "Stressed ⚠️";
+            crisisBox.style.display = "none";
+            mapContainer.style.display = "block"; // Show Map
+        } else {
+            condition = "High Load ❤️";
+            crisisBox.style.display = "flex";  // Show Helpline
+            mapContainer.style.display = "block"; // Show Map
+        }
+
+        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Score: ${totalScore.toFixed(1)}</p>`;
     }
 };
 
