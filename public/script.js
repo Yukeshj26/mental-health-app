@@ -137,6 +137,25 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- 4. CORE FUNCTIONS ---
+window.updateProgressBar = () => {
+    const totalQuestions = mentalHealthQuestions.length;
+    const answeredQuestions = document.querySelectorAll('.health-q-radio:checked').length;
+    const percentage = Math.round((answeredQuestions / totalQuestions) * 100);
+
+    const fill = document.getElementById('progress-fill');
+    const text = document.getElementById('progress-text');
+    const topBtn = document.getElementById('back-to-top');
+    
+    if (fill && text) {
+        fill.style.width = `${percentage}%`;
+        text.innerText = `${percentage}%`;
+        
+        // Optional: Change color to green when 100%
+        if (percentage === 100) {
+            fill.style.background = "#2ecc71";
+        }
+    }
+};
 
 window.toggleAuthMode = function() {
     isLoginMode = !isLoginMode;
@@ -171,8 +190,6 @@ window.handleAuth = async function() {
         }
     } catch (err) { alert(err.message); }
 };
-
-// ADD THIS IN public/script.js (Section 4 or 6)
 
 window.findNearbyClinics = () => {
     // This query searches for psychiatrists near the user's current GPS/IP location
@@ -213,7 +230,7 @@ window.calculateComplexScore = () => {
             condition = "High Load ❤️";
         }
 
-        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p>`;
+        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p><p class="mt-2 text-sm">Review your results above or chat with our AI for guidance.</p>`;
     }
 };
 
@@ -317,6 +334,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         `).join('')}
                     </div>
                 `;
+                div.addEventListener('change', window.updateProgressBar);
                 qContainer.appendChild(div);
             }
         });

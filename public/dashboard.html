@@ -38,6 +38,15 @@
 </section>
         <section class="card status-check">
             <h2>Comprehensive Mental Health Evaluation</h2>
+            <div class="progress-container">
+    <div class="progress-info">
+        <span>Assessment Progress</span>
+        <span id="progress-text">0%</span>
+    </div>
+    <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+    </div>
+</div>
             <p class="section-description">Please answer all 20 questions below. Your data is encrypted and secure.</p>
             
             <div id="questions-container" class="questions-grid">
@@ -58,5 +67,6 @@
     </div>
 </div>
     <script type="module" src="script.js?v=1.0.1"></script>
+    <button id="back-to-top" class="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" style="display: none;"></button>
 </body>
 </html>
