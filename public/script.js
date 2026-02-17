@@ -54,7 +54,7 @@ const scales = {
 const mentalHealthQuestions = [
     // Mood - Intensity is more relevant for 'feelings'
     { q: "Little interest or pleasure in doing things?", cat: "mood", weight: 1.5, type: "intensity" },
-    { q: "Feeling down, depressed, or hopeless?", cat: "mood", weight: 1.5, type: "intensity" },
+    { q: "Feeling down, depressed, or hopeless?", cat: "mood", weight: 2.0, type: "intensity" },
     { q: "Feeling irritable or 'on edge'?", cat: "mood", weight: 1.0, type: "intensity" },
     { q: "How often is it difficult to relax in free time?", cat: "mood", weight: 1.0, type: "freq" },
     { q: "How overwhelmed do you feel by daily responsibilities?", cat: "mood", weight: 1.0, type: "intensity" },
@@ -78,7 +78,7 @@ const mentalHealthQuestions = [
     { q: "How often do you worry excessively about things you can't control?", cat: "outlook", weight: 1.2, type: "freq" },
     { q: "I feel a strong sense of purpose in my daily life.", cat: "outlook", weight: -1.5, type: "agreement" },
     { q: "How frequently are you experiencing 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
-    { q: "I am hopeful about what my future holds.", cat: "outlook", weight: -1.5, type: "agreement" }
+    { q: "I am hopeful about what my future holds.", cat: "outlook", weight: -2.0, type: "agreement" }
 ];
 // --- 5. PAGE INITIALIZATION (Updated with absolute relevant labels) ---
 window.addEventListener('DOMContentLoaded', () => {
@@ -145,12 +145,19 @@ window.updateProgressBar = () => {
     const fill = document.getElementById('progress-fill');
     const text = document.getElementById('progress-text');
     const topBtn = document.getElementById('back-to-top');
-    
+
     if (fill && text) {
         fill.style.width = `${percentage}%`;
         text.innerText = `${percentage}%`;
         
         // Optional: Change color to green when 100%
+        if (topBtn) {
+            if (percentage >= 50) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        }
         if (percentage === 100) {
             fill.style.background = "#2ecc71";
         }
@@ -198,13 +205,27 @@ window.findNearbyClinics = () => {
 };
 
 window.calculateComplexScore = () => {
-    let totalScore = 0;
+    let rawScore = 0;
+    let maxPossibleRawScore = 0;
     let unanswered = false;
 
     mentalHealthQuestions.forEach((item, index) => {
         const selected = document.querySelector(`input[name="q-${index}"]:checked`);
         if (selected) {
-            totalScore += (parseInt(selected.value) * item.weight);
+            const val = parseInt(selected.value);
+            // We use the absolute weight to calculate the potential 'impact' range
+            maxPossibleRawScore += Math.abs(item.weight) * 3; 
+
+            // If weight is positive (a symptom), a high level subtracts from health
+            // If weight is negative (a strength), a high level adds to health
+            if (item.weight > 0) {
+                // Symptom: Level 3 means -3 impact on health
+                rawScore -= (val * item.weight);
+            } else {
+                // Strength: Level 3 means +3 impact on health
+                // We convert negative weight to positive for the math
+                rawScore += (val * Math.abs(item.weight));
+            }
         } else {
             unanswered = true;
         }
@@ -215,22 +236,42 @@ window.calculateComplexScore = () => {
         return;
     }
 
-    const display = document.getElementById("result-display");
+    // Normalize to a 0-100 scale
+    // We offset the rawScore so it starts from a base
+    let baseScore = 70; // Start at a 'neutral' healthy base
+    let finalPercentage = baseScore + (rawScore);
+    
+    // Clamp values between 0 and 100
+    finalPercentage = Math.max(0, Math.min(100, finalPercentage));
 
+    const display = document.getElementById("result-display");
     if (display) {
         display.style.display = "block";
-        let condition = "";
-
-        // Logic for Dynamic Visibility
-        if (totalScore < 10) {
-            condition = "Resilient 🌿";
-        } else if (totalScore < 25) {
-            condition = "Stressed ⚠️";
-        } else {
-            condition = "High Load ❤️";
+        
+        let status = "";
+        let color = "";
+        
+        if (finalPercentage > 80) { 
+            status = "Excellent - Thriving 🌟"; 
+            color = "#2ecc71";
+        } else if (finalPercentage > 60) { 
+            status = "Good - Resilient 🌿"; 
+            color = "#3498db";
+        } else if (finalPercentage > 40) { 
+            status = "Fair - Moderate Stress ⚠️"; 
+            color = "#f1c40f";
+        } else { 
+            status = "Low - Seeking Support Recommended ❤️"; 
+            color = "#e74c3c";
         }
 
-        display.innerHTML = `<h3>Condition: ${condition}</h3><p>Weighted Score: ${totalScore.toFixed(1)}</p><p class="mt-2 text-sm">Review your results above or chat with our AI for guidance.</p>`;
+        display.innerHTML = `
+            <div style="border-left: 5px solid ${color}; padding-left: 15px;">
+                <h2 style="color: ${color}">${finalPercentage.toFixed(0)}% Health Score</h2>
+                <h3>Status: ${status}</h3>
+                <p>Your mental well-being index is based on current symptoms and protective factors.</p>
+            </div>
+        `;
     }
 };
 
