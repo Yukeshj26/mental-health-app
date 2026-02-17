@@ -446,3 +446,30 @@ body.dark .bot-msg {
     font-size: 0.8rem;
     color: #555;
 }
+/* ADD THIS IN public/style.css */
+.government-helpline, .map-section {
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.helpline-box, .map-card {
+    background: var(--card-bg, #fff);
+    border: 2px solid #0056b3;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.helpline-number, .btn-map {
+    display: inline-block;
+    background: #0056b3;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+}
