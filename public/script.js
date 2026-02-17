@@ -393,18 +393,22 @@ window.findNearbyClinics = () => {
     window.open(mapUrl, '_blank');
 };
 window.toggleAuthMode = toggleAuthMode;
+// Ensure this is in your script.js (Section 4 or Global Exports)
 window.handleLogout = async () => {
-    // 1. Clear local data so the next session starts fresh
-    localStorage.clear(); 
-    sessionStorage.clear();
-    
-    // 2. Sign out from Firebase
-    signOut(auth).then(() => {
-        // 3. Redirect back to the login page
+    try {
+        // 1. Clear local data
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // 2. Firebase Sign Out
+        await auth.signOut();
+        
+        // 3. Redirect to login
         window.location.href = "index.html";
-    }).catch((error) => {
+    } catch (error) {
         console.error("Logout Error:", error);
-    });
+        alert("Logout failed. Please try again.");
+    }
 };
 window.toggleDarkMode = () => document.body.classList.toggle("dark");
 window.goToChat = () => window.location.href = "ai-chat.html";
