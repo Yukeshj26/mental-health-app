@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
     getAuth, 
-    signInWithEmailAndPassword, 
+    signInWithEmailAndPassword, auth.onAuthStateChanged
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged 
@@ -22,7 +22,7 @@ const auth = getAuth(app);
 
 // --- 2. AUTHENTICATION LISTENER ---
 // Inside your Firebase Auth listener
-auth.onAuthStateChanged((user) => {
+((user) => {
     if (user) {
         const nameDisplay = document.getElementById('user-display-name');
         if (nameDisplay) {
@@ -253,14 +253,14 @@ window.sendMessage = async function() {
         // 2. Get a fresh ID Token from Firebase
         const token = await user.getIdToken(true); 
 
-        const res = await fetch("https://mental-health-app-2vww.onrender.com/chat", {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json", 
-                "Authorization": `Bearer ${token}` // This fixes the 403
-            },
-            body: JSON.stringify({ message: msg })
-        });
+       const res = await fetch("https://mental-health-app-2vww.onrender.com/chat", {
+    method: "POST",
+    headers: { 
+        "Content-Type": "application/json", // This must match the middleware
+        "Authorization": `Bearer ${token}` 
+    },
+    body: JSON.stringify({ message: msg }) // Key must be "message"
+});
 
         if (res.status === 403) {
             addMsg("Bot", "Access denied. Try logging out and in again.", "bot-msg");

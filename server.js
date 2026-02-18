@@ -7,6 +7,7 @@ import apiRoutes from "./routes/index.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Chat from "./models/chat.js";
 const app = express();
+app.use(cors());
 app.use(express.json());
 // Load environment variables
 dotenv.config();
