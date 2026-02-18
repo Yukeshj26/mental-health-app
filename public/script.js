@@ -38,44 +38,47 @@ auth.onAuthStateChanged((user) => {
 let isLoginMode = true;
 
 const scales = {
-    // For habit-based or recurring symptoms
-    freq: ["Not at all", "Several days", "More than half the days", "Nearly every day"],
-    // For feelings and states of mind
-    intensity: ["None", "Mild / Distracting", "Moderate / Hard to manage", "Severe / Overwhelming"],
-    // For internal beliefs or support systems
-    agreement: ["Strongly Agree", "Agree", "Disagree", "Strongly Disagree"],
-    // For habits like sleep or appetite
-    quality: ["Optimal / Healthy", "Slightly irregular", "Poor / Impacting life", "Very Poor / Crisis level"]
+    // Bad (0) -> Good (3)
+    freq: ["Nearly every day", "More than half the days", "Several days", "Not at all"],
+    intensity: ["Severe / Overwhelming", "Moderate", "Mild", "None"],
+    agreement: ["Strongly Disagree", "Disagree", "Agree", "Strongly Agree"],
+    quality: ["Very Poor / Crisis level", "Poor / Impacting life", "Slightly irregular", "Optimal / Healthy"],
+    
+    // Custom Scale for Question 1
+    interest: ["No interest at all", "Very little interest", "Some interest", "Full of interest & passion"],
+    
+    // Custom Scale for Question 7
+    appetite: ["Severe disruption (Loss/Overeating)", "Regularly irregular", "Slightly irregular", "Healthy / Balanced"]
 };
 
 const mentalHealthQuestions = [
-    // Mood - Intensity is more relevant for 'feelings'
-    { q: "Little interest or pleasure in doing things?", cat: "mood", weight: 1.5, type: "intensity" },
+    // --- MOOD ---
+    { q: "How would you rate your interest or pleasure in doing things lately?", cat: "mood", weight: 1.5, type: "interest" }, // Q1 Updated
     { q: "Feeling down, depressed, or hopeless?", cat: "mood", weight: 2.0, type: "intensity" },
     { q: "Feeling irritable or 'on edge'?", cat: "mood", weight: 1.0, type: "intensity" },
-    { q: "How often is it difficult to relax in free time?", cat: "mood", weight: 1.0, type: "freq" },
-    { q: "How overwhelmed do you feel by daily responsibilities?", cat: "mood", weight: 1.0, type: "intensity" },
+    { q: "Ability to relax during your free time?", cat: "mood", weight: 1.0, type: "freq" },
+    { q: "Ability to manage daily responsibilities without feeling overwhelmed?", cat: "mood", weight: 1.0, type: "intensity" },
     
-    // Physical - Quality is better for sleep/appetite
+    // --- PHYSICAL ---
     { q: "How would you rate your sleep quality over the last week?", cat: "physical", weight: 1.2, type: "quality" },
-    { q: "How significant is the change in your appetite?", cat: "physical", weight: 1.0, type: "intensity" },
-    { q: "How often do you feel tired or have little energy?", cat: "physical", weight: 1.0, type: "freq" },
-    { q: "Frequency of stress-related physical pain (headaches/tension)?", cat: "physical", weight: 1.2, type: "freq" },
-    { q: "How hard is it to concentrate on reading/TV?", cat: "physical", weight: 1.0, type: "intensity" },
+    { q: "How has your appetite and nutritional balance been?", cat: "physical", weight: 1.0, type: "appetite" }, // Q7 Updated
+    { q: "Energy levels and freedom from fatigue?", cat: "physical", weight: 1.0, type: "freq" },
+    { q: "Freedom from stress-related physical pain (headaches/tension)?", cat: "physical", weight: 1.2, type: "freq" },
+    { q: "Ability to concentrate on tasks like reading or TV?", cat: "physical", weight: 1.0, type: "intensity" },
     
-    // Social - Frequency for actions, Agreement for support
-    { q: "How often are you avoiding social interactions?", cat: "social", weight: 1.2, type: "freq" },
-    { q: "I feel consistently supported by the people in my life.", cat: "social", weight: -1.0, type: "agreement" },
-    { q: "I am consistent with my self-care routines.", cat: "social", weight: -1.0, type: "agreement" },
-    { q: "How often do you feel lonely even when around others?", cat: "social", weight: 1.3, type: "freq" },
-    { q: "How often do you feel you're performing a 'happy' version of yourself?", cat: "social", weight: 1.3, type: "freq" },
+    // --- SOCIAL ---
+    { q: "Comfort and frequency of social interactions?", cat: "social", weight: 1.2, type: "freq" },
+    { q: "I feel consistently supported by the people in my life.", cat: "social", weight: 1.0, type: "agreement" },
+    { q: "I am consistent with my self-care routines.", cat: "social", weight: 1.0, type: "agreement" },
+    { q: "Feeling connected to others (freedom from loneliness)?", cat: "social", weight: 1.3, type: "freq" },
+    { q: "Ability to be your authentic self (not performing 'happy')?", cat: "social", weight: 1.3, type: "freq" },
     
-    // Outlook - Agreement for core beliefs
-    { q: "I feel confident in my ability to handle my problems.", cat: "outlook", weight: -1.2, type: "agreement" },
-    { q: "How often do you worry excessively about things you can't control?", cat: "outlook", weight: 1.2, type: "freq" },
-    { q: "I feel a strong sense of purpose in my daily life.", cat: "outlook", weight: -1.5, type: "agreement" },
-    { q: "How frequently are you experiencing 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
-    { q: "I am hopeful about what my future holds.", cat: "outlook", weight: -2.0, type: "agreement" }
+    // --- OUTLOOK ---
+    { q: "I feel confident in my ability to handle my problems.", cat: "outlook", weight: 1.2, type: "agreement" },
+    { q: "Freedom from excessive worry about things out of my control?", cat: "outlook", weight: 1.2, type: "freq" },
+    { q: "I feel a strong sense of purpose in my daily life.", cat: "outlook", weight: 1.5, type: "agreement" },
+    { q: "Mental clarity and freedom from 'brain fog'?", cat: "outlook", weight: 1.0, type: "freq" },
+    { q: "I am hopeful about what my future holds.", cat: "outlook", weight: 2.0, type: "agreement" }
 ];
 // --- 4. CORE FUNCTIONS ---
 window.updateProgressBar = () => {
@@ -95,7 +98,7 @@ window.updateProgressBar = () => {
             topBtn.style.display = "flex";
             topBtn.style.opacity = "0";
         } else {
-            topBtn.style.opacity = "0";
+            topBtn.classList.remove('show');
         }
     }
     if (percentage === 100) {
@@ -175,18 +178,16 @@ window.findNearbyClinics = () => {
 };
 
 window.calculateComplexScore = () => {
-    let rawScore = 0;
+    let earnedPoints = 0;
+    let maxPoints = 0;
     let unanswered = false;
 
     mentalHealthQuestions.forEach((item, index) => {
         const selected = document.querySelector(`input[name="q-${index}"]:checked`);
         if (selected) {
-            const val = parseInt(selected.value);
-            if (item.weight > 0) {
-                rawScore -= (val * item.weight); // Symptom subtracts from health
-            } else {
-                rawScore += (val * Math.abs(item.weight)); // Strength adds to health
-            }
+            const val = parseInt(selected.value); // 0, 1, 2, or 3
+            earnedPoints += (val * item.weight);
+            maxPoints += (3 * item.weight); // Max possible is Level 3
         } else {
             unanswered = true;
         }
@@ -197,9 +198,8 @@ window.calculateComplexScore = () => {
         return;
     }
 
-    let baseScore = 70; 
-    let finalPercentage = Math.max(0, Math.min(100, baseScore + rawScore));
-
+    const finalPercentage = (earnedPoints / maxPoints) * 100;
+    
     const display = document.getElementById("result-display");
     if (display) {
         display.style.display = "block";
