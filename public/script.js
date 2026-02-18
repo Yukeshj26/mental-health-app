@@ -76,6 +76,18 @@ const mentalHealthQuestions = [
 ];
 
 // --- 4. CORE FUNCTIONS ---
+const toggleAuthMode = function() {
+    isLoginMode = !isLoginMode;
+    const title = document.getElementById("auth-title");
+    const regName = document.getElementById("reg-name");
+    const btn = document.getElementById("auth-btn");
+    const toggleLink = document.getElementById("toggle-link");
+
+    if (title) title.innerText = isLoginMode ? "Welcome Back" : "Join Us";
+    if (regName) regName.style.display = isLoginMode ? "none" : "block";
+    if (btn) btn.innerText = isLoginMode ? "Login" : "Create Account";
+    if (toggleLink) toggleLink.innerText = isLoginMode ? "Sign Up" : "Login";
+};
 window.updateProgressBar = () => {
     const totalQuestions = mentalHealthQuestions.length;
     const answeredQuestions = document.querySelectorAll('.health-q-radio:checked').length;
@@ -180,21 +192,48 @@ window.calculateComplexScore = () => {
 window.sendMessage = async function() {
     const input = document.getElementById("userInput");
     const msg = input.value?.trim();
-    if (!msg || !auth.currentUser) return;
+    
+    // Safety check: ensure user is logged in
+    const user = auth.currentUser;
+    if (!msg || !user) {
+        if (!user) addMsg("Bot", "Please sign in to use the assistant.", "bot-msg");
+        return;
+    }
 
     addMsg("You", msg, "user-msg");
     input.value = "";
 
     try {
-        const token = await auth.currentUser.getIdToken(true); 
+        // Force refresh the token to avoid 403 Forbidden errors
+        const token = await user.getIdToken(true); 
+
         const res = await fetch("https://mental-health-app-2vww.onrender.com/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${token}` 
+            },
             body: JSON.stringify({ message: msg })
         });
+
+        if (!res.ok) {
+            throw new Error(`Server responded with ${res.status}`);
+        }
+
         const data = await res.json();
-        addMsg("Bot", data.reply || data.message || "Error", "bot-msg");
-    } catch (err) { addMsg("Bot", "Connection error.", "bot-msg"); }
+        // Handle different potential JSON response keys
+        const botReply = data.reply || data.message || data.response;
+        
+        if (botReply) {
+            addMsg("Bot", botReply, "bot-msg");
+        } else {
+            addMsg("Bot", "I received an empty response. Please try again.", "bot-msg");
+        }
+
+    } catch (err) { 
+        console.error("Chat Error:", err);
+        addMsg("Bot", "Connection error. The server may be waking up—please try again in a moment.", "bot-msg"); 
+    }
 };
 
 // --- 5. PAGE INITIALIZATION ---
