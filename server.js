@@ -6,7 +6,8 @@ import admin from "firebase-admin";
 import apiRoutes from "./routes/index.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Chat from "./models/chat.js";
-
+const app = express();
+app.use(express.json());
 // Load environment variables
 dotenv.config();
 
