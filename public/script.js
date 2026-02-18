@@ -90,16 +90,15 @@ window.updateProgressBar = () => {
     if (fill && text) {
         fill.style.width = `${percentage}%`;
         text.innerText = `${percentage}%`;
-        
-        // Optional: Change color to green when 100%
-        if (topBtn) {
-            if (percentage >= 40) {
-                topBtn.style.display = "block";
-            } else {
-                topBtn.style.display = "none";
-            }
+    if (topBtn) {
+        if (percentage >= 30) { // Shows up after 40% progress
+            topBtn.style.display = "flex";
+            topBtn.style.opacity = "0";
+        } else {
+            topBtn.style.opacity = "0";
         }
-        if (percentage === 100) {
+    }
+    if (percentage === 100) {
             fill.style.background = "#2ecc71";
         }
     }
