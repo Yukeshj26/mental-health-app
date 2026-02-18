@@ -28,7 +28,6 @@ admin.initializeApp({
 });
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const app = express();
 
 // Middleware
 app.use(cors({ origin: 'https://mental-health-app-ce57a.web.app' }));
