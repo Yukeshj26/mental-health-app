@@ -235,6 +235,14 @@ window.sendMessage = async function() {
         addMsg("Bot", "Connection error. The server may be waking up—please try again in a moment.", "bot-msg"); 
     }
 };
+window.findNearbyClinics = () => {
+    const query = encodeURIComponent("psychiatrist near me");
+    const mapUrl = `https://www.google.com/maps/search/${query}`;
+    window.open(mapUrl, '_blank');
+};
+const goToChat = () => {
+    window.location.href = "ai-chat.html";
+};
 
 // --- 5. PAGE INITIALIZATION ---
 window.addEventListener('DOMContentLoaded', () => {
