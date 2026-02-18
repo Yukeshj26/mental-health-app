@@ -244,4 +244,9 @@ window.handleLogout = async () => {
 window.toggleDarkMode = () => document.body.classList.toggle("dark");
 window.calculateComplexScore = calculateComplexScore;
 window.sendMessage = sendMessage;
-window.findNearbyClinics = () => window.open("https://www.google.com/maps/search/psychiatrist+near+me/", '_blank');
+window.findNearbyClinics = () => {
+    // Standard Google Maps search query for mental health professionals
+    const query = encodeURIComponent("psychiatrist near me");
+    const mapUrl = `https://www.google.com/maps/search/${query}`;
+    window.open(mapUrl, '_blank');
+};
