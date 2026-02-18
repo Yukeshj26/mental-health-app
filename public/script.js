@@ -199,7 +199,7 @@ window.calculateComplexScore = () => {
     }
 
     const finalPercentage = (earnedPoints / maxPoints) * 100;
-    
+
     const display = document.getElementById("result-display");
     if (display) {
         display.style.display = "block";
@@ -237,21 +237,44 @@ window.calculateComplexScore = () => {
 window.sendMessage = async function() {
     const input = document.getElementById("userInput");
     const msg = input.value?.trim();
-    const token = localStorage.getItem("token");
-    if (!msg || !token) return;
+    if (!msg) return;
+
+    // 1. Get the current user
+    const user = auth.currentUser;
+    if (!user) {
+        addMsg("Bot", "Please log in to chat.", "bot-msg");
+        return;
+    }
 
     addMsg("You", msg, "user-msg");
     input.value = "";
 
     try {
+        // 2. Get a fresh ID Token from Firebase
+        const token = await user.getIdToken(true); 
+
         const res = await fetch("https://mental-health-app-2vww.onrender.com/chat", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            headers: { 
+                "Content-Type": "application/json", 
+                "Authorization": `Bearer ${token}` // This fixes the 403
+            },
             body: JSON.stringify({ message: msg })
         });
+
+        if (res.status === 403) {
+            addMsg("Bot", "Access denied. Try logging out and in again.", "bot-msg");
+            return;
+        }
+
         const data = await res.json();
-        addMsg("Bot", data.reply, "bot-msg");
-    } catch (err) { addMsg("Bot", "Server Error.", "bot-msg"); }
+        const botReply = data.reply || data.message || "I'm thinking... could you repeat that?";
+        addMsg("Bot", botReply, "bot-msg");
+
+    } catch (err) { 
+        console.error("Chat Error:", err);
+        addMsg("Bot", "Connection error. Check your internet or server status.", "bot-msg"); 
+    }
 };
 
 function addMsg(sender, text, className) {
