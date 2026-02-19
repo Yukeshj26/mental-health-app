@@ -288,9 +288,6 @@ window.handleLogout = async () => {
     localStorage.clear();
     window.location.href = "index.html";
 };
-window.goToChat = () => {
-    window.location.href = "ai-chat.html";
-};
 
 window.toggleDarkMode = () => {
     document.body.classList.toggle("dark");
