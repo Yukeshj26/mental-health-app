@@ -8,57 +8,57 @@
     <meta http-equiv="Expires" content="0">
     <title>Dashboard - Mental Well-Being</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:,">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 <body class="light">
     <header class="app-header">
-    <h1 class="main-title">Mental Well-Being Check</h1>
-    
-    <div class="header-controls">
-        <div class="user-profile">
-            <span class="user-avatar">👤</span>
-            <span id="user-display-name">Loading...</span>
-        </div>
+        <h1 class="main-title">Mental Well-Being Check</h1>
+        
+        <div class="header-controls">
+            <div class="user-profile">
+                <span class="user-avatar">👤</span>
+                <span id="user-display-name">Loading...</span>
+            </div>
 
-        <button class="control-btn" onclick="toggleDarkMode()">
-            <span class="icon">🌙</span> Dark Mode
-        </button>
-        <button class="control-btn btn-danger" onclick="handleLogout()" title = "Logout">
-            <span class="icon">🚪</span> Logout
-        </button>
-    </div>
-</header>
+            <button class="control-btn" onclick="toggleDarkMode()">
+                <span class="icon">🌙</span> Dark Mode
+            </button>
+            <button class="control-btn btn-danger" onclick="handleLogout()" title="Logout">
+                <span class="icon">🚪</span> Logout
+            </button>
+        </div>
+    </header>
 
     <main class="content-wrapper">
         <section class="quick-access-bar">
-    <div class="resource-item" onclick="findNearbyClinics()">
-        <div class="resource-icon">📍</div>
-        <div class="resource-text">
-            <strong>Nearby Clinics</strong>
-            <span>Find psychiatrists in your area</span>
-        </div>
-    </div>
+            <div class="resource-item" onclick="findNearbyClinics()">
+                <div class="resource-icon">📍</div>
+                <div class="resource-text">
+                    <strong>Nearby Clinics</strong>
+                    <span>Find psychiatrists in your area</span>
+                </div>
+            </div>
 
-    <div class="resource-item helpline-highlight" onclick="window.location.href='tel:14416'">
-        <div class="resource-icon">📞</div>
-        <div class="resource-text">
-            <strong>Tele-MANAS</strong>
-            <span>24/7 Govt. Helpline (14416)</span>
-        </div>
-    </div>
-</section>
+            <div class="resource-item helpline-highlight" onclick="window.location.href='tel:14416'">
+                <div class="resource-icon">📞</div>
+                <div class="resource-text">
+                    <strong>Tele-MANAS</strong>
+                    <span>24/7 Govt. Helpline (14416)</span>
+                </div>
+            </div>
+        </section>
+
         <section class="card status-check">
             <h2>Comprehensive Mental Health Evaluation</h2>
             <div class="progress-container">
-    <div class="progress-info">
-        <span>Assessment Progress</span>
-        <span id="progress-text">0%</span>
-    </div>
-    <div class="progress-track">
-        <div id="progress-fill" class="progress-fill"></div>
-    </div>
-</div>
+                <div class="progress-info">
+                    <span>Assessment Progress</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
             <p class="section-description">Please answer all 20 questions below. Your data is encrypted and secure.</p>
             
             <div id="questions-container" class="questions-grid">
@@ -71,18 +71,22 @@
             <div id="result-display" class="status-result" style="display: none;">
                 </div>
         </section>
+
+        <div class="card chat-card" onclick="goToChat()">
+            <div class="chat-icon-large">🤖</div>
+            <div class="chat-content">
+                <h3>AI Counselor</h3>
+                <p>Chat with Gemini for instant support</p>
+            </div>
+        </div>
     </main>
 
-    <div class="ai-fab" onclick="goToChat()">
-        <span class="fab-icon">🤖</span>
-        <span class="fab-tooltip">Chat with AI Assistant</span>
-    </div>
-</div>
-<button id="back-to-top" class="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <button id="back-to-top" class="btn-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
-</button>
-<script type="module" src="script.js?v=1.0.1"></script>
+    </button>
+
+    <script type="module" src="script.js?v=1.0.2"></script>
 </body>
 </html>
