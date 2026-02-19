@@ -299,6 +299,7 @@ window.toggleDarkMode = () => {
 window.calculateComplexScore = calculateComplexScore;
 window.sendMessage = sendMessage;
 window.startVoice = startVoice;
+window.toggleDarkMode = toggleDarkMode;
 window.goToChat = goToChat;
 window.findNearbyClinics = () => {
     // Standard Google Maps search query for mental health professionals
