@@ -12,26 +12,34 @@
 </head>
 <body class="light">
     <header class="app-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
-    <div class="nav-left">
-        <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
-    </div>
+        <div class="nav-left">
+            <button class="btn-back" onclick="window.location.href='dashboard.html'">← Back</button>
+        </div>
 
-    <h1 style="flex-grow: 1; text-align: center;">Personal AI Guide</h1>
+        <h1 style="flex-grow: 1; text-align: center;">Personal AI Guide</h1>
 
-    <div class="nav-right" style="display: flex; gap: 10px; align-items: center;">
-        <button class="btn-icon" onclick="toggleDarkMode()">🌙</button>
-        <button class="btn-danger" onclick="handleLogout()" style="padding: 5px 10px; font-size: 0.8rem;">Logout</button>
-    </div>
-</header>
+        <div class="nav-right" style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn-icon" onclick="toggleDarkMode()">🌙</button>
+            <button class="btn-danger" onclick="handleLogout()" style="padding: 5px 10px; font-size: 0.8rem;">Logout</button>
+        </div>
+    </header>
+
     <main class="chat-container">
-        <div id="chatbox" class="chat-display"></div>
+        <div id="chatbox" class="chat-display">
+            <p class="bot-msg"><b>Bot:</b> Hello! I'm your Gemini-powered wellness guide. How are you feeling today?</p>
+        </div>
         
+        <div id="typing-indicator" style="display: none; padding: 10px; font-style: italic; color: var(--text-gray);">
+            Gemini is thinking...
+        </div>
+
         <div class="chat-input-area">
+            <button class="btn-icon" onclick="startVoice()" title="Voice Input">🎤</button>
             <input id="userInput" placeholder="Share your thoughts..." onkeypress="if(event.key==='Enter') sendMessage()">
             <button class="btn-send" onclick="sendMessage()">Send</button>
         </div>
     </main>
 
-    <script type="module" src="script.js?v=1.0.1"></script>
+    <script type="module" src="script.js?v=1.0.2"></script>
 </body>
 </html>

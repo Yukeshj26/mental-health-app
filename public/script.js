@@ -288,9 +288,18 @@ window.handleLogout = async () => {
     localStorage.clear();
     window.location.href = "index.html";
 };
-window.toggleDarkMode = () => document.body.classList.toggle("dark");
+window.goToChat = () => {
+    window.location.href = "ai-chat.html";
+};
+
+window.toggleDarkMode = () => {
+    document.body.classList.toggle("dark");
+    document.body.classList.toggle("light");
+};
 window.calculateComplexScore = calculateComplexScore;
 window.sendMessage = sendMessage;
+window.startVoice = startVoice;
+window.goToChat = goToChat;
 window.findNearbyClinics = () => {
     // Standard Google Maps search query for mental health professionals
     const query = encodeURIComponent("psychiatrist near me");
